@@ -1,0 +1,13 @@
+{% extends 'league/base.html' %} {% block content %}
+<h2>Matches for Round {{ match_day.round_number }}</h2>
+<ul>
+  {% for match in matches %}
+  <li>
+    <a href="{% url 'match_detail' match.id %}"
+      >{{ match.home_team.name }} vs {{ match.away_team.name }} - {{
+      match.match_date }}</a
+    >
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

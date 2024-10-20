@@ -1,0 +1,91 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+static/
+
+# If you are using MySQL, PostgreSQL, or another DB, ignore config files:
+*.sql
+*.sqlite3
+*.pgdata
+.DS_Store
+
+# If you're using Django migrations
+*.pyc
+*.log
+*.pot
+*.swp
+*.swo
+
+# Django generated files (for use in production)
+static/
+media/
+
+# Testing
+.coverage
+.tox/
+.nox/
+coverage.xml
+nosetests.xml
+test-results/
+
+# pyenv
+.python-version
+
+# Virtualenv
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# VS Code (if you're using Visual Studio Code)
+.vscode/
+
+# Pipenv
+Pipfile
+Pipfile.lock
+
+# Poetry
+poetry.lock
+poetry.toml
+
+# IDE-specific
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws

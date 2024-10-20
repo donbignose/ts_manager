@@ -1,0 +1,25 @@
+{% extends 'league/base.html' %} {% block content %}
+<h2>{{ team.name }}</h2>
+{% if team.venue %}
+  <h3>Venue</h3>
+  {{ team.venue }}
+  {{ team.venue.city }}
+  {{ team.venue.address }}
+{% endif %}
+
+<h3>Sesons</h3>
+<ul>
+  {% for season_team in season_teams %}
+  <li>
+    <h4>{{ season_team.season }}</h4>
+    Team members:
+    <ul>
+      {% for player in season_team.players.all %}
+      <li>{{ player }}</li>
+      {% endfor %}
+    </ul>
+      
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

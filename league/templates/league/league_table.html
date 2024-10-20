@@ -1,0 +1,25 @@
+{% extends 'league/base.html' %} {% block content %}
+<h2>{{ season }} League Table</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Wins</th>
+      <th>Losses</th>
+      <th>Draws</th>
+      <th>Points</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in table %}
+    <tr>
+      <td>{{ entry.team.name }}</td>
+      <td>{{ entry.wins }}</td>
+      <td>{{ entry.losses }}</td>
+      <td>{{ entry.draws }}</td>
+      <td>{{ entry.points }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: dev_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: django_dev
+      MYSQL_USER: django
+      MYSQL_PASSWORD: django_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - dev_net
+
+volumes:
+  db_data:
+
+networks:
+  dev_net:
+    driver: bridge
