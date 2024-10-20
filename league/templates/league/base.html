@@ -11,6 +11,13 @@
         <a href="{% url 'active_league' %}">League</a>
         <a href="{% url 'team_list' %}">Teams</a>
         <a href="{% url 'player_list' %}">Players</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'account_logout' %}">Logout</a>
+        <span>Welcome, {{ user.username }}!</span>
+        {% else %}
+        <a href="{% url 'account_login' %}">Login</a>
+        <a href="{% url 'account_signup' %}">Sign Up</a>
+        {% endif %}
       </nav>
     </header>
     <main>{% block content %} {% endblock %}</main>
