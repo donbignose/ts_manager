@@ -80,9 +80,7 @@ WSGI_APPLICATION = "ts_manager.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": env.db(engine="mysql.connector.django"),
-}
+DATABASES = {"default": env.db()}
 
 
 # Password validation
@@ -107,6 +105,8 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
+
+LOGIN_REDIRECT_URL = "/"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
