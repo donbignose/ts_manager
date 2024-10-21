@@ -18,6 +18,7 @@ urlpatterns = [
         views.match_day_detail,
         name="match_day_detail",
     ),
+    path("matches/<int:match_id>/", views.match_detail, name="match_detail"),
     # Submit score URL
     path(
         "matches/<int:match_id>/submit-score/", views.submit_score, name="submit_score"
@@ -25,12 +26,6 @@ urlpatterns = [
     # League table URL
     path(
         "seasons/<int:season_id>/league-table/", views.league_table, name="league_table"
-    ),
-    # Season team detail (team's roster for the season)
-    path(
-        "seasons/<int:season_id>/teams/<int:team_id>/",
-        views.season_team_detail,
-        name="season_team_detail",
     ),
     path("active-league/", views.active_league, name="active_league"),
     path("active-cup/", views.active_cup, name="active_cup"),

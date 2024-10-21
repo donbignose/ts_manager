@@ -16,14 +16,20 @@ def team_list(request):
 
 def team_detail(request, team_id):
     season_teams = (
-        SeasonTeam.objects.filter(team_id=team_id)
+        SeasonTeam.objects.filter(team_id=team_id, season__active=True)
         .select_related("season", "team", "team__venue")
-        .prefetch_related("players")
+        .prefetch_related("players", "team__home_matches", "team__away_matches")
     )
+    season = season_teams.first().season
+    team = season_teams.first().team
     return render(
         request,
         "league/team_detail.html",
-        {"team": season_teams.first().team, "season_teams": season_teams},
+        {
+            "team": team,
+            "season_teams": season_teams,
+            "matches": team.get_schedule(season),
+        },
     )
 
 
@@ -45,6 +51,11 @@ def match_day_detail(request, match_day_id):
         "league/match_day_detail.html",
         {"match_day": match_day, "matches": matches},
     )
+
+
+def match_detail(request, match_id):
+    match = get_object_or_404(Match, pk=match_id)
+    return render(request, "league/match_detail.html", {"match": match})
 
 
 def active_league(request):
@@ -75,18 +86,6 @@ def league_table(request, season_id):
     table = season.league_table.all().order_by("-points")
     return render(
         request, "league/league_table.html", {"table": table, "season": season}
-    )
-
-
-def season_team_detail(request, season_id, team_id):
-    season = get_object_or_404(Season, pk=season_id)
-    team = get_object_or_404(Team, pk=team_id)
-    season_team = get_object_or_404(SeasonTeam, season=season, team=team)
-    players = season_team.players.all()
-    return render(
-        request,
-        "league/season_team_detail.html",
-        {"team": team, "season": season, "players": players},
     )
 
 
