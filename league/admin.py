@@ -1,5 +1,10 @@
 from django.contrib import admin
+from django.shortcuts import render, redirect
+from django.urls import path
+from django.contrib import messages
+from django.utils.html import format_html
 
+from .forms import MatchGenerationForm
 from league.models import (
     League,
     Match,
@@ -31,10 +36,55 @@ class MatchInline(admin.TabularInline):
 
 
 # Season admin
+def generate_matches_view(request, season_id):
+    season = Season.objects.get(pk=season_id)
+
+    if request.method == "POST":
+        form = MatchGenerationForm(request.POST)
+        if form.is_valid():
+            start_date = form.cleaned_data["start_date"]
+            interval_days = form.cleaned_data["interval_days"]
+
+            result_message = season.generate_matches(
+                start_date, interval_days
+            )  # Call the method on the season
+            messages.success(request, result_message)
+
+            return redirect(
+                "admin:league_season_changelist"
+            )  # Redirect to the season list
+    else:
+        form = MatchGenerationForm()
+
+    return render(
+        request, "admin/generate_matches.html", {"form": form, "season": season}
+    )
+
+
 @admin.register(Season)
 class SeasonAdmin(admin.ModelAdmin):
-    list_display = ("__str__",)
+    list_display = ("__str__", "generate_matches_button")
     inlines = [SeasonTeamInline]  # Manage teams for the season through the inline
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "<int:season_id>/generate-matches/",
+                self.admin_site.admin_view(generate_matches_view),
+                name="generate_matches",
+            ),
+        ]
+        return custom_urls + urls
+
+    # Button to trigger match generation
+    def generate_matches_button(self, obj):
+        return format_html(
+            f'<a class="button" href="{obj.id}/generate-matches/">Generate Matches</a>'
+        )
+
+    generate_matches_button.short_description = "Generate Matches"
+    generate_matches_button.allow_tags = True
 
 
 # Team admin
