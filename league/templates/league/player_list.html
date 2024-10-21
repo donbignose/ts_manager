@@ -1,31 +1,33 @@
 {% extends 'league/base.html' %}
 {% block content %}
-    <h2>Players</h2>
+    <h1>Players</h1>
     <form method="get">
         {{ player_filter.form.as_p }}
         <input type="submit" />
         <a href="{% url 'player_list' %}">Reset Filters</a>
     </form>
-    <table>
+    <div class="relative flex flex-col w-full h-full mt-6 overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+    <table class="w-full text-left table-auto min-w-max">
         <thead>
             <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">First Name</th>
+                <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Last Name</th>
             </tr>
         </thead>
         <tbody>
             {% for player in player_filter.qs %}
                 <tr>
-                    <td>
+                    <td class="p-4 border-b border-blue-gray-50">
                         <a href="{% url 'player_detail' player.id %}">{{ player.first_name }}</a>
                     </td>
-                    <td>{{ player.last_name }}</td>
+                    <td class="p-4 border-b border-blue-gray-50">{{ player.last_name }}</td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="2">No players found</td>
+                    <td class="p-4 border-b border-blue-gray-50" colspan="2">No players found</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    </div>
 {% endblock %}

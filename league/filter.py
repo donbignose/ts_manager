@@ -1,10 +1,10 @@
+from django.db.models import Q
 from league.models import Player
 import django_filters as df
 
 
 class PlayerFilter(df.FilterSet):
-    first_name = df.CharFilter(lookup_expr="icontains", label="First Name")
-    last_name = df.CharFilter(lookup_expr="icontains", label="Last Name")
+    name = df.CharFilter(method="filter_by_name", label="Name")
 
     o = df.OrderingFilter(
         fields=(
@@ -20,4 +20,13 @@ class PlayerFilter(df.FilterSet):
 
     class Meta:
         model = Player
-        fields = ["first_name", "last_name"]
+        fields = ["name"]
+
+    def filter_by_name(self, queryset, name, value):
+        """
+        Custom method to filter by first name or last name.
+        This allows searching for either first or last name in one field.
+        """
+        return queryset.filter(
+            Q(first_name__icontains=value) | Q(last_name__icontains=value)
+        )
