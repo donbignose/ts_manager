@@ -1,20 +1,20 @@
-{% extends 'league/base.html' %} {% block content %}
-<h2>League</h2>
-
-<h3>{{ season }}</h3>
-<ul>
-  {% for match_day in season.match_days.all %}
-  <li>
-    {{ match_day }}:
+{% extends 'league/base.html' %}
+{% block content %}
+    <h2>League</h2>
+    <h3>{{ season }}</h3>
     <ul>
-      {% for match in match_day.matches.all %}
-      <li>
-        {{ match.home_team }} vs {{ match.away_team }}: {{ match.score1 }} - {{
-        match.score2 }}
-      </li>
-      {% endfor %}
+        {% for match_day in season.match_days.all %}
+            <li>
+                {{ match_day }}:
+                <ul>
+                    {% for match in match_day.matches.all %}
+                        <li>
+                            {{ match.home_team }} vs {{ match.away_team }}: {{ match.score1 }} - {{
+                            match.score2 }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
     </ul>
-  </li>
-  {% endfor %}
-</ul>
 {% endblock %}

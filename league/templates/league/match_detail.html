@@ -1,14 +1,15 @@
-{% extends 'league/base.html' %} {% block content %}
-<h2>Match Detail</h2>
-<p>{{ match.home_team.name }} vs {{ match.away_team.name }}</p>
-<h3>Segments</h3>
-<ul>
-  {% for segment in match.segments.all %}
-  <li>
-    Segment {{ segment.segment_number }}: {{ segment.home_score }} - {{
-    segment.away_score }}
-  </li>
-  {% endfor %}
-</ul>
-<a href="{% url 'submit_score' match.id %}">Submit Score</a>
+{% extends 'league/base.html' %}
+{% block content %}
+    <h2>Match Detail</h2>
+    <p>{{ match.home_team.name }} vs {{ match.away_team.name }}</p>
+    <h3>Segments</h3>
+    <ul>
+        {% for segment in match.segments.all %}
+            <li>
+                Segment {{ segment.segment_number }}: {{ segment.home_score }} - {{
+                segment.away_score }}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'submit_score' match.id %}">Submit Score</a>
 {% endblock %}

@@ -1,12 +1,11 @@
-{% extends 'league/base.html' %} {% block content %}
-<h2>Match Days for {{ season }}</h2>
-<ul>
-  {% for match_day in match_days %}
-  <li>
-    <a href="{% url 'match_day_detail' match_day.id %}"
-      >Round {{ match_day.round_number }}</a
-    >
-  </li>
-  {% endfor %}
-</ul>
+{% extends 'league/base.html' %}
+{% block content %}
+    <h2>Match Days for {{ season }}</h2>
+    <ul>
+        {% for match_day in match_days %}
+            <li>
+                <a href="{% url 'match_day_detail' match_day.id %}">Round {{ match_day.round_number }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
