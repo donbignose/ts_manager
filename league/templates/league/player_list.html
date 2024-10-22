@@ -1,10 +1,9 @@
 {% extends 'league/base.html' %}
 {% block content %}
     <h1>Players</h1>
-    <form method="get">
-        {{ player_filter.form.as_p }}
-        <input type="submit" />
-        <a href="{% url 'player_list' %}">Reset Filters</a>
+    <form method="get" class="mt-2">
+        {% load crispy_forms_tags %}
+        {% crispy player_filter.form player_filter.form.helper %}
     </form>
     <div class="relative flex flex-col w-full h-full mt-6 overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
     <table class="w-full text-left table-auto min-w-max">

@@ -1,10 +1,16 @@
 from django.db.models import Q
+from django.forms import TextInput
+from league.forms import PlayerFilterForm
 from league.models import Player
 import django_filters as df
 
 
 class PlayerFilter(df.FilterSet):
-    name = df.CharFilter(method="filter_by_name", label="Name")
+    name = df.CharFilter(
+        method="filter_by_name",
+        label="",
+        widget=TextInput(attrs={"placeholder": "Search players"}),
+    )
 
     o = df.OrderingFilter(
         fields=(
@@ -21,6 +27,7 @@ class PlayerFilter(df.FilterSet):
     class Meta:
         model = Player
         fields = ["name"]
+        form = PlayerFilterForm
 
     def filter_by_name(self, queryset, name, value):
         """
