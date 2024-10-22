@@ -16,6 +16,7 @@ django-tailwind = {extras = ["reload"], version = "^3.8.0"}
 cryptography = "^43.0.3"
 django-crispy-forms = "^2.3"
 crispy-tailwind = "^1.0.3"
+django-tables2 = "^2.7.0"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -1,10 +1,9 @@
-{% extends "admin/base_site.html" %} {% block content %}
-<h1>Generate Matches for {{ season }}</h1>
-
-<form method="post">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit" class="button">Generate Matches</button>
-</form>
-
-<a href="{% url 'admin:league_season_changelist' %}">Back to Season List</a>
+{% extends "admin/base_site.html" %}
+{% block content %}
+    <h1>Generate Matches for {{ season }}</h1>
+    <form method="post">
+        {% csrf_token %} {{ form.as_p }}
+        <button type="submit" class="button">Generate Matches</button>
+    </form>
+    <a href="{% url 'admin:league_season_changelist' %}">Back to Season List</a>
 {% endblock %}

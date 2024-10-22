@@ -30,6 +30,6 @@ urlpatterns = [
     path("active-league/", views.active_league, name="active_league"),
     path("active-cup/", views.active_cup, name="active_cup"),
     # Player URLs
-    path("players/", views.player_list, name="player_list"),
+    path("players/", views.PlayerListView.as_view(), name="player_list"),
     path("players/<int:player_id>/", views.player_detail, name="player_detail"),
 ]

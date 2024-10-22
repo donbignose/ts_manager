@@ -1,32 +1,10 @@
 {% extends 'league/base.html' %}
+{% load render_table from django_tables2 %}
 {% block content %}
     <h1>Players</h1>
     <form method="get" class="mt-2">
         {% load crispy_forms_tags %}
-        {% crispy player_filter.form player_filter.form.helper %}
+        {% crispy filter.form filter.form.helper %}
     </form>
-    <div class="relative flex flex-col w-full h-full mt-6 overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-    <table class="w-full text-left table-auto min-w-max">
-        <thead>
-            <tr>
-                <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">First Name</th>
-                <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Last Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for player in player_filter.qs %}
-                <tr>
-                    <td class="p-4 border-b border-blue-gray-50">
-                        <a href="{% url 'player_detail' player.id %}">{{ player.first_name }}</a>
-                    </td>
-                    <td class="p-4 border-b border-blue-gray-50">{{ player.last_name }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td class="p-4 border-b border-blue-gray-50" colspan="2">No players found</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    </div>
+    {% render_table table %}
 {% endblock %}
