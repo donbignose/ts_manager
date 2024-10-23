@@ -170,7 +170,13 @@ class Team(models.Model):
 
 
 class Player(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="player",
+    )
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
 
@@ -179,6 +185,16 @@ class Player(models.Model):
 
     def get_absolute_url(self):
         return reverse("player_detail", args=[str(self.pk)])
+
+    def get_current_team(self, season: Season):
+        """
+        Returns the team the player is currently part of for a given season.
+        """
+        try:
+            season_team = self.teams.get(season=season)
+            return season_team.team
+        except SeasonTeam.DoesNotExist:
+            return None
 
 
 class SeasonTeam(models.Model):

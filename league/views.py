@@ -1,5 +1,7 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory
+from django.http.response import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -104,19 +106,53 @@ def active_cup(request):
     return render(request, "league/active_league.html", {"season": season})
 
 
-class SubmitView(FormView):
+class SubmitView(LoginRequiredMixin, FormView):
     template_name = None
     _form = None
 
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Perform authorization checks before handling the request.
+        """
+        team_role, team = self.get_team_and_role()
+
+        if not team_role:
+            return HttpResponseForbidden(
+                "You are not authorized to submit for that match."
+            )
+
+        request.team_role = team_role
+        request.team = team
+        return super().dispatch(request, *args, **kwargs)
+
     def get_form_class(self):
-        # Use modelformset_factory to create a formset for SegmentScore
         return modelformset_factory(SegmentScore, form=self._form, extra=0)
 
     def get_match(self):
         return get_object_or_404(Match, id=self.kwargs["match_id"])
 
+    def get_team_and_role(self) -> tuple[str, Team] | tuple[None, None]:
+        """
+        Return the user's team for the current season by checking the Player model.
+        """
+        match = self.get_match()
+
+        try:
+            player = self.request.user.player
+        except Player.DoesNotExist:
+            return None, None
+
+        season = match.match_day.season
+        current_team = player.get_current_team(season)
+
+        if current_team == match.home_team:
+            return "home", current_team
+        elif current_team == match.away_team:
+            return "away", current_team
+        else:
+            return None, None
+
     def get_queryset(self):
-        # Fetch all segment scores related to the match
         match = self.get_match()
         return SegmentScore.objects.filter(match=match).order_by("segment_number")
 
@@ -141,6 +177,8 @@ class SubmitView(FormView):
         """
         context = super().get_context_data(**kwargs)
         context["match"] = self.get_match()
+        context["formset"] = self.get_restricted_formset(self.request.team_role)
+        context["team_role"] = self.request.team_role
         return context
 
     def get_success_url(self):
@@ -149,6 +187,13 @@ class SubmitView(FormView):
         """
         match = self.get_match()
         return reverse("match_detail", kwargs={"match_id": match.id})
+
+    def get_restricted_formset(self, team_role):
+        """
+        Creates a formset and restrict the fields for the opposing team.
+        """
+        formset = self.get_form_class()(queryset=self.get_queryset())
+        return formset
 
 
 class SubmitScoreView(SubmitView):
@@ -159,6 +204,20 @@ class SubmitScoreView(SubmitView):
 class SubmitLineupView(SubmitView):
     template_name = "league/submit_lineup.html"
     _form = SegmentLineupForm
+
+    def get_restricted_formset(self, team_role):
+        """
+        Creates a formset and restrict the fields for the opposing team.
+        """
+        formset = self.get_form_class()(queryset=self.get_queryset())
+
+        for form in formset:
+            if team_role == "home":
+                form.fields["away_players"].widget.attrs["disabled"] = True
+            elif team_role == "away":
+                form.fields["home_players"].widget.attrs["disabled"] = True
+
+        return formset
 
 
 @login_required
