@@ -1,4 +1,5 @@
 import random
+from django.core.exceptions import ValidationError
 from datetime import timedelta
 from itertools import combinations
 from django.db import models
@@ -124,7 +125,7 @@ class Season(models.Model):
 
     def _create_match_day_and_matches(self, match_pairs, match_day_date, round_number):
         match_day, _ = MatchDay.objects.get_or_create(
-            season=self, round_number=round_number
+            season=self, round_number=round_number, date=match_day_date
         )
         for home_team, away_team in match_pairs:
             if home_team.name == "BYE" or away_team.name == "BYE":
@@ -134,7 +135,7 @@ class Season(models.Model):
                 match_day=match_day,
                 home_team=home_team,
                 away_team=away_team,
-                match_date=match_day_date,
+                date=match_day_date,
             )
 
     class Meta:
@@ -222,6 +223,11 @@ class Match(models.Model):
     date = models.DateField()
     status = models.CharField(max_length=20, choices=Status, default=Status.NOT_STARTED)
 
+    class Meta:
+        unique_together = ("match_day", "home_team", "away_team")
+        ordering = ["match_day"]
+        verbose_name_plural = "Matches"
+
     @property
     def home_score(self):
         if self.status == Match.Status.NOT_STARTED:
@@ -243,19 +249,111 @@ class Match(models.Model):
     def __str__(self):
         return f"{self.home_team} vs {self.away_team} on {self.date}"
 
-    class Meta:
-        unique_together = ("match_day", "home_team", "away_team")
-        ordering = ["match_day"]
+    def clean(self):
+        super().clean()
+        if self.home_score > 49 or self.away_score > 49:
+            raise ValidationError("The total score for a team cannot exceed 49 points.")
 
 
 class SegmentScore(models.Model):
+    class SegmentType(models.TextChoices):
+        D1 = "D1", "Doubles 1"
+        D2 = "D2", "Doubles 2"
+        S1 = "S1", "Singles 1"
+        D3 = "D3", "Doubles 3"
+        S2 = "S2", "Singles 2"
+        D4 = "D4", "Doubles 4"
+        D5 = "D5", "Doubles 5"
+
+    SEGMENT_GROUPS = {
+        "group1": ["D1", "D2"],  # A player can only play once in D1 + D2
+        "group2": ["S1", "D3", "S2"],  # A player can only play once in S1 + D3 + S2
+        "group3": ["D4", "D5"],  # A player can only play once in D4 + D5
+    }
+    MAX_SCORE = 7
+
     match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name="segments")
-    segment_number = models.IntegerField()
-    home_score = models.IntegerField()
-    away_score = models.IntegerField()
+    segment_number = models.IntegerField()  # From 1 to 7
+    home_score = models.IntegerField(null=True, blank=True)
+    away_score = models.IntegerField(null=True, blank=True)
+    segment_type = models.CharField(max_length=2, choices=SegmentType.choices)
+
+    # Many-to-many relationship for players in each segment
+    home_players = models.ManyToManyField(
+        "Player", related_name="home_segments", blank=True
+    )
+    away_players = models.ManyToManyField(
+        "Player", related_name="away_segments", blank=True
+    )
 
     class Meta:
         unique_together = ("match", "segment_number")
+
+    def __str__(self):
+        return f"{self.match} - Segment {self.segment_type}"
+
+    def clean(self):
+        super().clean()
+
+        # Validate correct number of players based on segment type
+        self.validate_player_count(self.segment_type, self.home_players, "home")
+        self.validate_player_count(self.segment_type, self.away_players, "away")
+
+        # Validate player participation restrictions
+        self.validate_player_participation(self.home_players, self.match, "home")
+        self.validate_player_participation(self.away_players, self.match, "away")
+
+    def validate_player_count(self, segment_type, players, team):
+        """
+        Validates that singles segments have exactly 1 player and doubles segments have exactly 2 players.
+        """
+        if segment_type.startswith("S") and players.count() != 1:
+            raise ValidationError(
+                f"{team.capitalize()} team must have exactly 1 player for singles segment {segment_type}."
+            )
+        elif segment_type.startswith("D") and players.count() != 2:
+            raise ValidationError(
+                f"{team.capitalize()} team must have exactly 2 players for doubles segment {segment_type}."
+            )
+
+    def validate_player_participation(self, players, match, team_type):
+        """
+        Validates that players are not playing more than allowed in restricted segments.
+        """
+        for player in players.all():
+            conflicting_segments = SegmentScore.objects.filter(
+                match=match, **{f"{team_type}_players": player}
+            ).exclude(pk=self.pk)  # Exclude the current segment
+
+            # Keep track of player participation in restricted groups
+            participation_tracker = {
+                "group1": set(),
+                "group2": set(),
+                "group3": set(),
+            }
+
+            for segment in conflicting_segments:
+                if segment.segment_type in self.SEGMENT_GROUPS["group1"]:
+                    participation_tracker["group1"].add(segment.segment_type)
+                elif segment.segment_type in self.SEGMENT_GROUPS["group2"]:
+                    participation_tracker["group2"].add(segment.segment_type)
+                elif segment.segment_type in self.SEGMENT_GROUPS["group3"]:
+                    participation_tracker["group3"].add(segment.segment_type)
+
+            # Add current segment type to the tracker
+            if self.segment_type in self.SEGMENT_GROUPS["group1"]:
+                participation_tracker["group1"].add(self.segment_type)
+            elif self.segment_type in self.SEGMENT_GROUPS["group2"]:
+                participation_tracker["group2"].add(self.segment_type)
+            elif self.segment_type in self.SEGMENT_GROUPS["group3"]:
+                participation_tracker["group3"].add(self.segment_type)
+
+            # Now check if any player plays more than once in a restricted group
+            for _, participation in participation_tracker.items():
+                if len(participation) > 1:
+                    raise ValidationError(
+                        f"Player {player} cannot participate in multiple segments of the same group ({', '.join(participation)})."
+                    )
 
 
 class LeagueTable(models.Model):

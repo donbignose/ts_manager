@@ -1,17 +1,17 @@
-from django.contrib import admin
-from django.shortcuts import render, redirect
+from django.contrib import admin, messages
+from django.shortcuts import redirect, render
 from django.urls import path
-from django.contrib import messages
 from django.utils.html import format_html
 
-from .forms import MatchGenerationForm
-from league.models import (
+from .forms import MatchGenerationForm, SegmentScoreForm
+from .models import (
     League,
     Match,
     MatchDay,
     Player,
     Season,
     SeasonTeam,
+    SegmentScore,
     Team,
     Venue,
 )
@@ -33,6 +33,26 @@ class PlayerInline(admin.TabularInline):
 class MatchInline(admin.TabularInline):
     model = Match
     extra = 1
+
+
+class SegmentScoreInline(admin.TabularInline):
+    model = SegmentScore
+    form = SegmentScoreForm
+    extra = 0  # No extra blank segments
+    min_num = 7  # Ensure at least 7 segments are shown (D1-D5 and S1-S2)
+    max_num = 7
+    readonly_fields = ["segment_type"]
+    fields = [
+        "segment_type",
+        "home_score",
+        "away_score",
+        "home_players",
+        "away_players",
+    ]
+    filter_horizontal = [
+        "home_players",
+        "away_players",
+    ]
 
 
 # Season admin
@@ -112,6 +132,22 @@ class SeasonTeamAdmin(admin.ModelAdmin):
 class MatchDayAdmin(admin.ModelAdmin):
     list_display = ("__str__",)
     inlines = [MatchInline]
+
+
+@admin.register(Match)
+class MatchAdmin(admin.ModelAdmin):
+    list_display = [
+        "__str__",
+        "status",
+    ]  # Columns shown in the match list view
+    list_filter = [
+        "status",
+        "date",
+        "home_team",
+        "away_team",
+    ]  # Filters for narrowing down results
+    search_fields = ["home_team__name", "away_team__name"]  # Search by team name
+    inlines = [SegmentScoreInline]  # Show segments inline on the match detail page
 
 
 admin.site.register(Venue)
