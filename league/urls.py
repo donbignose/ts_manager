@@ -21,7 +21,14 @@ urlpatterns = [
     path("matches/<int:match_id>/", views.match_detail, name="match_detail"),
     # Submit score URL
     path(
-        "matches/<int:match_id>/submit-score/", views.submit_score, name="submit_score"
+        "matches/<int:match_id>/submit-score/",
+        views.SubmitScoreView.as_view(),
+        name="submit_score",
+    ),
+    path(
+        "matches/<int:match_id>/submit-lineup/",
+        views.SubmitLineupView.as_view(),
+        name="submit_lineup",
     ),
     # League table URL
     path(

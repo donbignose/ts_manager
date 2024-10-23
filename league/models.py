@@ -251,7 +251,9 @@ class Match(models.Model):
 
     def clean(self):
         super().clean()
-        if self.home_score > 49 or self.away_score > 49:
+        if self.status != self.Status.NOT_STARTED and (
+            self.home_score > 49 or self.away_score > 49
+        ):
             raise ValidationError("The total score for a team cannot exceed 49 points.")
 
 
@@ -307,11 +309,11 @@ class SegmentScore(models.Model):
         """
         Validates that singles segments have exactly 1 player and doubles segments have exactly 2 players.
         """
-        if segment_type.startswith("S") and players.count() != 1:
+        if segment_type.startswith("S") and players.count() > 1:
             raise ValidationError(
                 f"{team.capitalize()} team must have exactly 1 player for singles segment {segment_type}."
             )
-        elif segment_type.startswith("D") and players.count() != 2:
+        elif segment_type.startswith("D") and players.count() not in [0, 2]:
             raise ValidationError(
                 f"{team.capitalize()} team must have exactly 2 players for doubles segment {segment_type}."
             )

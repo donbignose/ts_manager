@@ -29,7 +29,7 @@ class PlayerFilterForm(forms.Form):
         )
 
 
-class SegmentScoreForm(forms.ModelForm):
+class SegmentForm(forms.ModelForm):
     class Meta:
         model = SegmentScore
         fields = [
@@ -44,7 +44,7 @@ class SegmentScoreForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(SegmentScoreForm, self).__init__(*args, **kwargs)
+        super(SegmentForm, self).__init__(*args, **kwargs)
 
         try:
             match = self.instance.match
@@ -63,6 +63,55 @@ class SegmentScoreForm(forms.ModelForm):
             self.fields["away_players"].queryset = away_season_team.players.all()
         except SegmentScore.match.RelatedObjectDoesNotExist:
             pass
+
+    def clean(self):
+        cleaned_data = super().clean()
+        home_score = cleaned_data.get("home_score") or 0
+        away_score = cleaned_data.get("away_score") or 0
+        segment_number = self.instance.segment_number
+
+        max_score = segment_number * SegmentScore.MAX_SCORE
+        if home_score > max_score or away_score > max_score:
+            raise forms.ValidationError(
+                f"Score cannot exceed {max_score} for segment {segment_number}."
+            )
+
+        return cleaned_data
+
+
+class SegmentLineupForm(forms.ModelForm):
+    class Meta:
+        model = SegmentScore
+        fields = ["home_players", "away_players"]
+        widgets = {
+            "home_players": forms.CheckboxSelectMultiple,
+            "away_players": forms.CheckboxSelectMultiple,
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(SegmentLineupForm, self).__init__(*args, **kwargs)
+
+        try:
+            match = self.instance.match
+            season = match.match_day.season
+            home_team = match.home_team
+            away_team = match.away_team
+
+            # Filter home players
+            home_season_team = SeasonTeam.objects.get(season=season, team=home_team)
+            self.fields["home_players"].queryset = home_season_team.players.all()
+
+            # Filter away players
+            away_season_team = SeasonTeam.objects.get(season=season, team=away_team)
+            self.fields["away_players"].queryset = away_season_team.players.all()
+        except SegmentScore.match.RelatedObjectDoesNotExist:
+            pass
+
+
+class SegmentScoreForm(forms.ModelForm):
+    class Meta:
+        model = SegmentScore
+        fields = ["home_score", "away_score"]
 
     def clean(self):
         cleaned_data = super().clean()

@@ -1,11 +1,17 @@
-from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.forms import modelformset_factory
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import ListView
+from django.views.generic.edit import FormView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
+
 from league.filter import PlayerFilter
-from .models import MatchDay, Player, Season, SeasonTeam, Team, Match
+
+from .forms import SegmentScoreForm, SegmentLineupForm
+from .models import Match, MatchDay, Player, Season, SeasonTeam, SegmentScore, Team
 from .tables import PlayerTable, TeamTable
 
 
@@ -96,6 +102,63 @@ def active_league(request):
 def active_cup(request):
     season = Season.objects.filter(active=True, league__type="cup").first()
     return render(request, "league/active_league.html", {"season": season})
+
+
+class SubmitView(FormView):
+    template_name = None
+    _form = None
+
+    def get_form_class(self):
+        # Use modelformset_factory to create a formset for SegmentScore
+        return modelformset_factory(SegmentScore, form=self._form, extra=0)
+
+    def get_match(self):
+        return get_object_or_404(Match, id=self.kwargs["match_id"])
+
+    def get_queryset(self):
+        # Fetch all segment scores related to the match
+        match = self.get_match()
+        return SegmentScore.objects.filter(match=match).order_by("segment_number")
+
+    def get_form_kwargs(self):
+        """
+        Pass additional data to the formset such as the queryset (the segments for the match).
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs["queryset"] = self.get_queryset()
+        return kwargs
+
+    def form_valid(self, formset):
+        """
+        Handle valid formset submission.
+        """
+        formset.save()  # Save all the forms in the formset
+        return redirect(self.get_success_url())
+
+    def get_context_data(self, **kwargs):
+        """
+        Add match information to the template context.
+        """
+        context = super().get_context_data(**kwargs)
+        context["match"] = self.get_match()
+        return context
+
+    def get_success_url(self):
+        """
+        Redirect to the match_detail page of the match.
+        """
+        match = self.get_match()
+        return reverse("match_detail", kwargs={"match_id": match.id})
+
+
+class SubmitScoreView(SubmitView):
+    template_name = "league/submit_score.html"
+    _form = SegmentScoreForm
+
+
+class SubmitLineupView(SubmitView):
+    template_name = "league/submit_lineup.html"
+    _form = SegmentLineupForm
 
 
 @login_required

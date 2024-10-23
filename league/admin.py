@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.urls import path
 from django.utils.html import format_html
 
-from .forms import MatchGenerationForm, SegmentScoreForm
+from .forms import MatchGenerationForm, SegmentForm
 from .models import (
     League,
     Match,
@@ -37,7 +37,7 @@ class MatchInline(admin.TabularInline):
 
 class SegmentScoreInline(admin.TabularInline):
     model = SegmentScore
-    form = SegmentScoreForm
+    form = SegmentForm
     extra = 0  # No extra blank segments
     min_num = 7  # Ensure at least 7 segments are shown (D1-D5 and S1-S2)
     max_num = 7

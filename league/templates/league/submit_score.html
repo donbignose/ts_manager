@@ -1,0 +1,30 @@
+{% extends 'league/base.html' %}
+
+{% block content %}
+<h2>Submit Scores for {{ match.home_team }} vs {{ match.away_team }} on {{ match.date }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.management_form }}
+  <div class="match-form">
+    <ul class="segment-list">
+      {% for form_part in form %}
+      <li class="segment-item">
+        <h4>{{ form_part.instance.get_segment_type_display }} {{form_part.id}}</h4>
+
+        <div class="segment-score">
+          <label>Home Team Score</label>
+          {{ form_part.home_score }}
+        </div>
+        <div class="segment-score">
+          <label>Away Team Score</label>
+          {{ form_part.away_score }}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <button type="submit" class="submit-button">Submit Scores</button>
+</form>
+{% endblock %}
