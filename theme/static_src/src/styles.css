@@ -3,17 +3,25 @@
 @tailwind utilities;
 
 h1 {
-  @apply text-4xl font-bold;
+  @apply text-4xl font-bold dark:text-white;
 }
 
 h2 {
-  @apply text-3xl font-semibold;
+  @apply text-3xl font-semibold dark:text-white;
 }
 
 h3 {
-  @apply text-2xl font-semibold;
+  @apply text-2xl font-semibold dark:text-white;
+}
+
+h4 {
+  @apply text-xl font-medium dark:text-white;
+}
+
+h5 {
+  @apply text-l font-medium dark:text-white;
 }
 
 p {
-  @apply text-base;
+  @apply text-base dark:text-white;
 }

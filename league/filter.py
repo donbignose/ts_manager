@@ -9,7 +9,12 @@ class PlayerFilter(df.FilterSet):
     name = df.CharFilter(
         method="filter_by_name",
         label="",
-        widget=TextInput(attrs={"placeholder": "Search players"}),
+        widget=TextInput(
+            attrs={
+                "placeholder": "Search players",
+                "class": "dark:bg-gray-700 dark:text-white dark:border-black",
+            }
+        ),
     )
 
     o = df.OrderingFilter(

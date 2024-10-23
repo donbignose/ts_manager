@@ -42,6 +42,7 @@ module.exports = withMT({
      * and make sure the pattern below matches your project structure.
      */
     "../../**/tables.py",
+    "../../**/filter.py",
   ],
   theme: {
     extend: {},

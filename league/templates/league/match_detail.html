@@ -17,32 +17,32 @@
     <ul>
         {% for segment in match.segments.all %}
             <li>
-                <strong>{{ segment.get_segment_type_display }}:</strong>
-                <br>
-                Score: {{ segment.home_score }} - {{ segment.away_score }}
-                <br>
-                <strong>Home Players:</strong>
+                <h4>{{ segment.get_segment_type_display }}:</h4>
+                <p>Score: {{ segment.home_score }} - {{ segment.away_score }}</p>
+                <h5>Home Players:</h5>
+                <ul>
                 {% if segment.home_players.all %}
                     {% for player in segment.home_players.all %}
-                        {{ player }}
-                        {% if not forloop.last %},{% endif %}
+                        <li class="dark:text-white">{{ player }}</li>
                     {% endfor %}
                 {% else %}
-                    No players assigned.
+                    <li class="dark:text-white">No players assigned.</li>
                 {% endif %}
-                <br>
-                <strong>Away Players:</strong>
+                </ul>
+                
+                <h5>Away Players:</h5>
+                <ul>
                 {% if segment.away_players.all %}
                     {% for player in segment.away_players.all %}
-                        {{ player }}
-                        {% if not forloop.last %},{% endif %}
+                        <li class="dark:text-white">{{ player }}</li>
                     {% endfor %}
                 {% else %}
-                    No players assigned.
+                    <li class="dark:text-white">No players assigned.</li>
                 {% endif %}
+                </ul>
             </li>
         {% endfor %}
     </ul>
-    <a href="{% url 'submit_lineup' match.id %}">Submit Lineup</a>
-    <a href="{% url 'submit_score' match.id %}">Submit Score</a>
+    <a class="dark:text-white" href="{% url 'submit_lineup' match.id %}">Submit Lineup</a>
+    <a class="dark:text-white" href="{% url 'submit_score' match.id %}">Submit Score</a>
 {% endblock %}

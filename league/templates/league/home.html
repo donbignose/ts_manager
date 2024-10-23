@@ -4,7 +4,7 @@
     <p>Explore the site using the links below:</p>
     <ul>
         <li>
-            <a href="{% url 'team_list' %}">View Teams</a>
+            <a class="dark:text-white" href="{% url 'team_list' %}">View Teams</a>
         </li>
         <!-- Add more links here to explore other sections -->
     </ul>
@@ -16,7 +16,7 @@
                     <a class="text-blue-500 hover:underline"
                        href="{% url 'match_detail' match.pk %}">{{ match.home_team }} vs {{ match.away_team }}</a>
                     <br>
-                    Score: {{ match.home_score }} - {{ match.away_score }}
+                    <p> Score: {{ match.home_score }} - {{ match.away_score }}</p>
                 </li>
             {% endfor %}
         </ul>
@@ -28,9 +28,8 @@
         <ul>
             {% for match in next_match_day.matches.all %}
                 <li>
-                    {{ match.home_team }} vs {{ match.away_team }}
-                    <br>
-                    Status: {{ match.status }}
+                    <p>{{ match.home_team }} vs {{ match.away_team }}</p>
+                    <p>Status: {{ match.status }}</p>
                 </li>
             {% endfor %}
         </ul>

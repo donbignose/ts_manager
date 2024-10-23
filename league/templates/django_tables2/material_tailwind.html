@@ -3,7 +3,7 @@
 {% block table-wrapper %}
     <div class="table-container">
         {% block table %}
-            <div class="relative flex flex-col w-full h-full mt-6 overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+            <div class="relative flex flex-col w-full h-full mt-6 overflow-scroll text-gray-700 dark:text-white bg-white dark:bg-gray-700 shadow-md rounded-xl bg-clip-border">
                 <table {% render_attrs table.attrs %}
                        class="w-full text-left table-auto min-w-max">
                     {% block table.thead %}
@@ -11,7 +11,7 @@
                             <thead {{ table.attrs.thead.as_html }}>
                                 <tr>
                                     {% for column in table.columns %}
-                                        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50 {{ column.attrs.th.class }}">
+                                        <th class="p-4 border-b border-blue-gray-100 dark:border-gray-900 bg-blue-gray-50 dark:bg-black {{ column.attrs.th.class }}">
                                             {% if column.orderable %}
                                                 <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}">{{ column.header }}</a>
                                             {% else %}
@@ -29,7 +29,7 @@
                                 {% block table.tbody.row %}
                                     <tr {{ row.attrs.as_html }}>
                                         {% for column, cell in row.items %}
-                                            <td class="p-4 border-b border-blue-gray-50 {{ column.attrs.td.class }} ">
+                                            <td class="p-4 border-b border-blue-gray-50 dark:border-gray-900 {{ column.attrs.td.class }} ">
                                                 {% if column.localize == None %}
                                                     {{ cell }}
                                                 {% else %}
