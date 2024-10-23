@@ -194,6 +194,7 @@ class MatchDay(models.Model):
         Season, on_delete=models.CASCADE, related_name="match_days"
     )
     round_number = models.IntegerField()
+    date = models.DateField()
 
     def __str__(self):
         return f"Round {self.round_number} ({self.season})"
@@ -218,7 +219,7 @@ class Match(models.Model):
     away_team = models.ForeignKey(
         Team, on_delete=models.CASCADE, related_name="away_matches"
     )
-    match_date = models.DateField()
+    date = models.DateField()
     status = models.CharField(max_length=20, choices=Status, default=Status.NOT_STARTED)
 
     @property
@@ -240,7 +241,7 @@ class Match(models.Model):
         return sum(segment.away_score for segment in segments)
 
     def __str__(self):
-        return f"{self.home_team} vs {self.away_team} on {self.match_date}"
+        return f"{self.home_team} vs {self.away_team} on {self.date}"
 
     class Meta:
         unique_together = ("match_day", "home_team", "away_team")
