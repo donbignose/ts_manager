@@ -8,4 +8,32 @@
         </li>
         <!-- Add more links here to explore other sections -->
     </ul>
+    <h2>Previous Match Day ({{ previous_match_day.date }})</h2>
+    {% if previous_match_day %}
+      <ul>
+        {% for match in previous_match_day.matches.all %}
+          <li>
+            <a class="text-blue-500 hover:underline" href="{% url 'match_detail' match.pk %}">
+              {{ match.home_team }} vs {{ match.away_team }}
+            </a>
+            <br>Score: {{ match.home_score }} - {{ match.away_score }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No previous match day found.</p>
+    {% endif %}
+
+    <h2>Next Match Day ({{ next_match_day.date }})</h2>
+    {% if next_match_day %}
+      <ul>
+        {% for match in next_match_day.matches.all %}
+          <li>{{ match.home_team }} vs {{ match.away_team }}
+            <br>Status: {{ match.status }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No upcoming match day found.</p>
+    {% endif %}
 {% endblock %}

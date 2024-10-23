@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from django.views.generic import ListView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
@@ -9,7 +10,27 @@ from .tables import PlayerTable, TeamTable
 
 
 def home(request):
-    return render(request, "league/home.html")
+    today = timezone.now().date()
+    previous_match_day = (
+        MatchDay.objects.filter(date__lte=today)
+        .order_by("date")
+        .prefetch_related("matches__home_team", "matches__away_team")
+        .first()
+    )
+
+    next_match_day = (
+        MatchDay.objects.filter(date__gt=today)
+        .order_by("date")
+        .prefetch_related("matches__home_team", "matches__away_team")
+        .first()
+    )
+
+    context = {
+        "previous_match_day": previous_match_day,
+        "next_match_day": next_match_day,
+    }
+
+    return render(request, "league/home.html", context)
 
 
 class TeamListView(SingleTableMixin, ListView):
