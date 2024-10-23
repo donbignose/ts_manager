@@ -204,6 +204,11 @@ class MatchDay(models.Model):
 
 
 class Match(models.Model):
+    class Status(models.TextChoices):
+        NOT_STARTED = "Not Started"
+        IN_PROGRESS = "In Progress"
+        FINISHED = "Finished"
+
     match_day = models.ForeignKey(
         MatchDay, on_delete=models.CASCADE, related_name="matches"
     )
@@ -214,6 +219,25 @@ class Match(models.Model):
         Team, on_delete=models.CASCADE, related_name="away_matches"
     )
     match_date = models.DateField()
+    status = models.CharField(max_length=20, choices=Status, default=Status.NOT_STARTED)
+
+    @property
+    def home_score(self):
+        if self.status == Match.Status.NOT_STARTED:
+            return None
+        segments = self.segments.all()
+        if len(segments) == 0:
+            return 0
+        return sum(segment.home_score for segment in segments)
+
+    @property
+    def away_score(self):
+        if self.status == Match.Status.NOT_STARTED:
+            return None
+        segments = self.segments.all()
+        if len(segments) == 0:
+            return 0
+        return sum(segment.away_score for segment in segments)
 
     def __str__(self):
         return f"{self.home_team} vs {self.away_team} on {self.match_date}"
