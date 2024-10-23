@@ -7,6 +7,7 @@ import withMT from "@material-tailwind/html/utils/withMT";
  */
 
 module.exports = withMT({
+  darkMode: "selector",
   content: [
     /**
      * HTML. Paths to Django template files that will contain Tailwind CSS classes.

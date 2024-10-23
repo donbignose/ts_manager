@@ -95,7 +95,12 @@ def match_detail(request, match_id):
 def active_league(request):
     season = (
         Season.objects.filter(active=True, league__type="regular")
-        .prefetch_related("match_days", "match_days__matches")
+        .prefetch_related(
+            "match_days",
+            "match_days__matches",
+            "match_days__matches__home_team",
+            "match_days__matches__away_team",
+        )
         .first()
     )
     return render(request, "league/active_league.html", {"season": season})

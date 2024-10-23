@@ -1,29 +1,41 @@
 {% extends 'league/base.html' %}
 {% block content %}
     <h1>{{ match.home_team.name }} vs {{ match.away_team.name }}</h1>
-    <p><strong>Date:</strong> {{ match.date }}</p>
-    <p><strong>Venue:</strong> {{ match.home_team.venue }}</p>
-    <p><strong>Status:</strong> {{ match.status }}</p>
-    <p><strong>Overall Score:</strong> {{ match.home_score }} - {{ match.away_score }}</p>
-
+    <p>
+        <strong>Date:</strong> {{ match.date }}
+    </p>
+    <p>
+        <strong>Venue:</strong> {{ match.home_team.venue }}
+    </p>
+    <p>
+        <strong>Status:</strong> {{ match.status }}
+    </p>
+    <p>
+        <strong>Overall Score:</strong> {{ match.home_score }} - {{ match.away_score }}
+    </p>
     <h3>Segments</h3>
     <ul>
         {% for segment in match.segments.all %}
             <li>
-                <strong>{{ segment.get_segment_type_display }}:</strong> 
-                <br>Score: {{ segment.home_score }} - {{ segment.away_score }}
-                <br><strong>Home Players:</strong> 
+                <strong>{{ segment.get_segment_type_display }}:</strong>
+                <br>
+                Score: {{ segment.home_score }} - {{ segment.away_score }}
+                <br>
+                <strong>Home Players:</strong>
                 {% if segment.home_players.all %}
                     {% for player in segment.home_players.all %}
-                        {{ player }}{% if not forloop.last %}, {% endif %}
+                        {{ player }}
+                        {% if not forloop.last %},{% endif %}
                     {% endfor %}
                 {% else %}
                     No players assigned.
                 {% endif %}
-                <br><strong>Away Players:</strong> 
+                <br>
+                <strong>Away Players:</strong>
                 {% if segment.away_players.all %}
                     {% for player in segment.away_players.all %}
-                        {{ player }}{% if not forloop.last %}, {% endif %}
+                        {{ player }}
+                        {% if not forloop.last %},{% endif %}
                     {% endfor %}
                 {% else %}
                     No players assigned.
@@ -31,7 +43,6 @@
             </li>
         {% endfor %}
     </ul>
-
     <a href="{% url 'submit_lineup' match.id %}">Submit Lineup</a>
     <a href="{% url 'submit_score' match.id %}">Submit Score</a>
 {% endblock %}

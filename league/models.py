@@ -211,7 +211,7 @@ class MatchDay(models.Model):
         Season, on_delete=models.CASCADE, related_name="match_days"
     )
     round_number = models.IntegerField()
-    date = models.DateField()
+    date = models.DateField(db_index=True)
 
     def __str__(self):
         return f"Round {self.round_number} ({self.season})"

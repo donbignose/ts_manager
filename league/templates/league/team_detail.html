@@ -24,7 +24,7 @@
         {% for match in matches %}
             <ul>
                 <li>
-                    {{ match.match_day }} ({{ match.match_date }}): <a href="{% url 'match_detail' match.id %}">
+                    {{ match.match_day }} ({{ match.date }}): <a href="{% url 'match_detail' match.id %}">
                     {% if match.home_team == team %}
                         <strong>{{ match.home_team }}</strong>
                     {% else %}

@@ -2,7 +2,7 @@
 {% block title %}Table Soccer League{% endblock %}
 {% block body %}
     <header>
-        <nav class="block w-full max-w-screen-lg px-4 py-2 mx-auto bg-white shadow-md rounded-md lg:px-8 lg:py-3 mt-10">
+        <nav class="block w-full max-w-screen-lg px-4 py-2 mx-auto bg-white dark:bg-black shadow-md rounded-md lg:px-8 lg:py-3 mt-10">
             <div class="container flex flex-wrap items-center justify-between mx-auto text-slate-800">
                 <a href="{% url 'home' %}"
                    class="mr-4 block cursor-pointer py-1.5 text-base text-slate-800 font-semibold">Home</a>
@@ -77,6 +77,27 @@
                                 </a>
                             </li>
                         {% endif %}
+                        <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
+                            <button id="theme-toggle"
+                                    class="p-2 rounded-lg bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100">
+                                <svg id="theme-toggle-dark-icon"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="w-6 h-6 hidden"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8-9h1M4 12H3m12.364 4.364l.707-.707m-8.486 0l-.707.707M16.95 7.05l.707-.707m-8.486 0l-.707.707M12 5a7 7 0 1 1-7 7h1" />
+                                </svg>
+                                <svg id="theme-toggle-light-icon"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="w-6 h-6 hidden"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h1M4 12H3m1.707-5.707l.707.707m12.728 12.728l-.707.707M6.343 6.343l.707-.707m12.728 12.728l-.707.707M12 3v1m0 16v1m4.242-10.242a6 6 0 1 1-8.485 0 6 6 0 0 1 8.485 0z" />
+                                </svg>
+                            </button>
+                        </li>
                     </ul>
                 </div>
                 <button data-collapse-target="collapse"
@@ -137,6 +158,37 @@
                         </div>
                     </div>
                     <script src="https://unpkg.com/@material-tailwind/html@latest/scripts/collapse.js"></script>
+                    <script>
+                        // Dark Mode Toggle Script
+                        const themeToggle = document.getElementById('theme-toggle');
+                        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+                        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+                        // Set the icons visibility based on the theme
+                        const updateIcons = () => {
+                            if (document.documentElement.classList.contains('dark')) {
+                                darkIcon.classList.remove('hidden');
+                                lightIcon.classList.add('hidden');
+                            } else {
+                                lightIcon.classList.remove('hidden');
+                                darkIcon.classList.add('hidden');
+                            }
+                        };
+
+                        updateIcons();
+
+                        themeToggle.addEventListener('click', () => {
+                            document.documentElement.classList.toggle('dark');
+                            // Save user's preference in localStorage
+                            if (document.documentElement.classList.contains('dark')) {
+                                localStorage.setItem('theme', 'dark');
+                            } else {
+                                localStorage.setItem('theme', 'light');
+                            }
+                            // Update icons
+                            updateIcons();
+                        });
+                    </script>
                 </nav>
             </header>
             <main class="block w-full max-w-screen-lg mx-auto px-4 py-2 bg-white shadow-md rounded-md lg:px-8 lg:py-3 mt-10">
