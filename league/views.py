@@ -1,19 +1,22 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from league.filter import PlayerFilter
 from .models import MatchDay, Player, Season, SeasonTeam, Team, Match
-from .tables import PlayerTable
+from .tables import PlayerTable, TeamTable
 
 
 def home(request):
     return render(request, "league/home.html")
 
 
-def team_list(request):
-    teams = Team.objects.all()
-    return render(request, "league/team_list.html", {"teams": teams})
+class TeamListView(SingleTableMixin, ListView):
+    queryset = Team.objects.all().select_related("venue")
+    table_class = TeamTable
+    template_name = "league/team_list.html"
+    paginate_by = 10
 
 
 def team_detail(request, team_id):
@@ -92,10 +95,10 @@ def league_table(request, season_id):
 
 
 class PlayerListView(SingleTableMixin, FilterView):
-    model = Player
     table_class = PlayerTable
     template_name = "league/player_list.html"
     filterset_class = PlayerFilter
+    queryset = Player.objects.all()
     paginate_by = 10
 
 

@@ -1,11 +1,6 @@
 {% extends 'league/base.html' %}
+{% load render_table from django_tables2 %}
 {% block content %}
     <h2>Teams</h2>
-    <ul>
-        {% for team in teams %}
-            <li>
-                <a href="{% url 'team_detail' team.id %}">{{ team.name }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+    {% render_table table %}
 {% endblock %}

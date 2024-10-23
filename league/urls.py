@@ -5,7 +5,7 @@ urlpatterns = [
     # Home page
     path("", views.home, name="home"),
     # Team URLs
-    path("teams/", views.team_list, name="team_list"),
+    path("teams/", views.TeamListView.as_view(), name="team_list"),
     path("teams/<int:team_id>/", views.team_detail, name="team_detail"),
     # Match day URLs
     path(

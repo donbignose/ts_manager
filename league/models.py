@@ -3,6 +3,7 @@ from datetime import timedelta
 from itertools import combinations
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class League(models.Model):
@@ -152,10 +153,16 @@ class Team(models.Model):
     )
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, null=True, blank=True)
 
+    class Meta:
+        ordering = ["name"]
+
     def get_schedule(self, season):
         return self.home_matches.filter(
             match_day__season=season
         ) | self.away_matches.filter(match_day__season=season)
+
+    def get_absolute_url(self):
+        return reverse("team_detail", args=[str(self.pk)])
 
     def __str__(self):
         return self.name
@@ -168,6 +175,9 @@ class Player(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+    def get_absolute_url(self):
+        return reverse("player_detail", args=[str(self.pk)])
 
 
 class SeasonTeam(models.Model):

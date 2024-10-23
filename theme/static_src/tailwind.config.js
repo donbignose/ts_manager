@@ -40,7 +40,7 @@ module.exports = withMT({
      * Python: If you use Tailwind CSS classes in Python, uncomment the following line
      * and make sure the pattern below matches your project structure.
      */
-    // '../../**/*.py'
+    "../../**/tables.py",
   ],
   theme: {
     extend: {},
