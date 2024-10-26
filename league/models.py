@@ -310,69 +310,6 @@ class SegmentScore(models.Model):
     def __str__(self):
         return f"{self.match} - Segment {self.segment_type}"
 
-    def clean(self):
-        super().clean()
-
-        # Validate correct number of players based on segment type
-        self.validate_player_count(self.segment_type, self.home_players, "home")
-        self.validate_player_count(self.segment_type, self.away_players, "away")
-
-        # Validate player participation restrictions
-        self.validate_player_participation(self.home_players, self.match, "home")
-        self.validate_player_participation(self.away_players, self.match, "away")
-
-    def validate_player_count(self, segment_type, players, team):
-        """
-        Validates that singles segments have exactly 1 player and doubles segments have exactly 2 players.
-        """
-        if segment_type.startswith("S") and players.count() > 1:
-            raise ValidationError(
-                f"{team.capitalize()} team must have exactly 1 player for singles segment {segment_type}."
-            )
-        elif segment_type.startswith("D") and players.count() not in [0, 2]:
-            raise ValidationError(
-                f"{team.capitalize()} team must have exactly 2 players for doubles segment {segment_type}."
-            )
-
-    def validate_player_participation(self, players, match, team_type):
-        """
-        Validates that players are not playing more than allowed in restricted segments.
-        """
-        for player in players.all():
-            conflicting_segments = SegmentScore.objects.filter(
-                match=match, **{f"{team_type}_players": player}
-            ).exclude(pk=self.pk)  # Exclude the current segment
-
-            # Keep track of player participation in restricted groups
-            participation_tracker = {
-                "group1": set(),
-                "group2": set(),
-                "group3": set(),
-            }
-
-            for segment in conflicting_segments:
-                if segment.segment_type in self.SEGMENT_GROUPS["group1"]:
-                    participation_tracker["group1"].add(segment.segment_type)
-                elif segment.segment_type in self.SEGMENT_GROUPS["group2"]:
-                    participation_tracker["group2"].add(segment.segment_type)
-                elif segment.segment_type in self.SEGMENT_GROUPS["group3"]:
-                    participation_tracker["group3"].add(segment.segment_type)
-
-            # Add current segment type to the tracker
-            if self.segment_type in self.SEGMENT_GROUPS["group1"]:
-                participation_tracker["group1"].add(self.segment_type)
-            elif self.segment_type in self.SEGMENT_GROUPS["group2"]:
-                participation_tracker["group2"].add(self.segment_type)
-            elif self.segment_type in self.SEGMENT_GROUPS["group3"]:
-                participation_tracker["group3"].add(self.segment_type)
-
-            # Now check if any player plays more than once in a restricted group
-            for _, participation in participation_tracker.items():
-                if len(participation) > 1:
-                    raise ValidationError(
-                        f"Player {player} cannot participate in multiple segments of the same group ({', '.join(participation)})."
-                    )
-
 
 class LeagueTable(models.Model):
     season = models.ForeignKey(

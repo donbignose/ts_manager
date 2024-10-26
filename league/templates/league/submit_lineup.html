@@ -7,24 +7,47 @@
         <div class="match-form">
             <ul class="segment-list">
                 {% for form in formset %}
-                    <li class="segment-item">
+                    <li class="segment-item dark:text-white">
                         <h3>{{ form.instance.get_segment_type_display }} {{ form.id }}</h3>
+                        {% if form.non_field_errors %}
+                            <ul class="errorlist">
+                                {% for error in form.non_field_errors %}
+                                    <li class="text-red-500">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                         {% if team_role == 'home' %}
                             <div class="segment-players">
                                 <label>Home Team Players</label>
                                 {{ form.home_players }}
+                                <!-- Display errors for home_players field -->
+                                {% if form.home_players.errors %}
+                                    <ul class="errorlist">
+                                        {% for error in form.home_players.errors %}
+                                            <li class="text-red-500">{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </div>
                         {% endif %}
                         {% if team_role == 'away' %}
                             <div class="segment-players">
                                 <label>Away Team Players</label>
                                 {{ form.away_players }}
+                                <!-- Display errors for away_players field -->
+                                {% if form.away_players.errors %}
+                                    <ul class="errorlist">
+                                        {% for error in form.away_players.errors %}
+                                            <li class="text-red-500">{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </div>
                         {% endif %}
                     </li>
                 {% endfor %}
             </ul>
         </div>
-        <button type="submit" class="submit-button">Submit Lineup</button>
+        <button type="submit" class="submit-button dark:text-white">Submit Lineup</button>
     </form>
 {% endblock %}

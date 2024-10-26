@@ -19,7 +19,7 @@ h4 {
 }
 
 h5 {
-  @apply text-l font-medium dark:text-white;
+  @apply text-lg font-medium dark:text-white;
 }
 
 p {

@@ -5,7 +5,7 @@ from django.http.response import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
@@ -14,7 +14,7 @@ from league.filter import PlayerFilter
 
 from .forms import SegmentScoreForm, SegmentLineupForm
 from .models import Match, MatchDay, Player, Season, SeasonTeam, SegmentScore, Team
-from .tables import PlayerTable, TeamTable
+from .tables import PlayerTable, TeamTable, SegmentTable
 
 
 def home(request):
@@ -87,9 +87,14 @@ def match_day_detail(request, match_day_id):
     )
 
 
-def match_detail(request, match_id):
-    match = get_object_or_404(Match, pk=match_id)
-    return render(request, "league/match_detail.html", {"match": match})
+class MatchDetailView(SingleTableMixin, DetailView):
+    model = Match
+    table_class = SegmentTable
+    template_name = "league/match_detail.html"
+
+    def get_table_data(self):
+        match = self.get_object()
+        return match.segments.all()
 
 
 def active_league(request):
@@ -176,13 +181,21 @@ class SubmitView(LoginRequiredMixin, FormView):
         formset.save()  # Save all the forms in the formset
         return redirect(self.get_success_url())
 
-    def get_context_data(self, **kwargs):
+    def form_invalid(self, formset):
+        """
+        Handle formset errors.
+        """
+        return self.render_to_response(self.get_context_data(formset=formset))
+
+    def get_context_data(self, formset=None, **kwargs):
         """
         Add match information to the template context.
         """
         context = super().get_context_data(**kwargs)
         context["match"] = self.get_match()
-        context["formset"] = self.get_restricted_formset(self.request.team_role)
+        context["formset"] = formset or self.get_restricted_formset(
+            self.request.team_role
+        )
         context["team_role"] = self.request.team_role
         return context
 
@@ -191,7 +204,7 @@ class SubmitView(LoginRequiredMixin, FormView):
         Redirect to the match_detail page of the match.
         """
         match = self.get_match()
-        return reverse("match_detail", kwargs={"match_id": match.id})
+        return reverse("match_detail", kwargs={"pk": match.id})
 
     def get_restricted_formset(self, team_role):
         """
