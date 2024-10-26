@@ -1,6 +1,7 @@
 {% load static tailwind_tags %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 	<head>
     <title>{% block title %}Django Tailwind{% endblock %}</title>
 		<meta charset="UTF-8">
@@ -13,9 +14,11 @@
         localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
       )
     </script>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
 	</head>
 
-	<body class="bg-gray-300 dark:bg-gray-700 mb-4 font-serif leading-normal tracking-normal">
+	<body class="bg-gray-300 dark:bg-gray-700 mb-4 font-serif leading-normal tracking-normal min-h-screen flex flex-col">
     {% block body %}
     <div class="container mx-auto">
       <section class="flex items-center justify-center h-screen">
@@ -23,5 +26,27 @@
       </section>
     </div>
     {% endblock %}
+
+    <footer class="bg-gray-200 dark:bg-gray-800 text-center p-4 mt-auto">
+      <form id="language-form" action="{% url 'set_language' %}" method="post">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.path }}">
+        <label for="language" class="mr-2">
+          <i class="fa-solid fa-language fa-xl"></i>
+        </label>
+        <select name="language" id="language" class="rounded-md dark:bg-gray-700 dark:text-white" onchange="document.getElementById('language-form').submit();">
+          {% get_current_language as LANGUAGE_CODE %}
+          {% get_available_languages as LANGUAGES %}
+          {% get_language_info_list for LANGUAGES as languages %}
+          {% for language in languages %}
+            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+              {{ language.name_local }} ({{ language.code }})
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+    </footer>
 	</body>
+
+
 </html>

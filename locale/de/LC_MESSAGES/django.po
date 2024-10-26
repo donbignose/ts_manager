@@ -1,0 +1,90 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-26 15:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: league/templates/django_tables2/material_tailwind.html:79
+msgid "previous"
+msgstr "zurück"
+
+#: league/templates/django_tables2/material_tailwind.html:99
+msgid "next"
+msgstr "weiter"
+
+#: league/templates/league/active_league.html:4
+#: league/templates/league/base.html:22 league/templates/league/base.html:126
+msgid "League"
+msgstr "Liga"
+
+#: league/templates/league/active_league.html:10
+msgid "Match day"
+msgstr "Spieltag"
+
+#: league/templates/league/base.html:9
+msgid "Home"
+msgstr "Startseite"
+
+#: league/templates/league/base.html:35 league/templates/league/base.html:131
+#: league/templates/league/team_list.html:5
+msgid "Teams"
+msgstr "Teams"
+
+#: league/templates/league/base.html:48 league/templates/league/base.html:138
+#: league/templates/league/player_list.html:5
+msgid "Players"
+msgstr "Spieler"
+
+#: league/templates/league/base.html:62 league/templates/league/base.html:146
+msgid "Logout"
+msgstr "Abmelden"
+
+#: league/templates/league/base.html:64
+msgid "Welcome"
+msgstr "Willkommen"
+
+#: league/templates/league/base.html:77 league/templates/league/base.html:154
+msgid "Login"
+msgstr "Anmelden"
+
+#: league/templates/league/home.html:4
+msgid "Welcome to the Table Soccer League!"
+msgstr "Willkommen in der Tischfußball-Liga!"
+
+#: league/templates/league/home.html:5
+msgid "Previous Match Day"
+msgstr "Vorheriger Spieltag"
+
+#: league/templates/league/home.html:13
+msgid "Score"
+msgstr "Ergebnis"
+
+#: league/templates/league/home.html:18
+msgid "No previous match day found."
+msgstr "Kein vorheriger Spieltag gefunden."
+
+#: league/templates/league/home.html:20
+msgid "Next Match Day"
+msgstr "Nächster Spieltag"
+
+#: league/templates/league/home.html:26
+msgid "Status"
+msgstr "Status"
+
+#: league/templates/league/home.html:31
+msgid "No upcoming match day found."
+msgstr "Kein kommender Spieltag gefunden."

@@ -1,14 +1,8 @@
 {% extends 'league/base.html' %}
+{% load i18n %}
 {% block content %}
-    <h2>Welcome to the Table Soccer League!</h2>
-    <p>Explore the site using the links below:</p>
-    <ul>
-        <li>
-            <a class="dark:text-white" href="{% url 'team_list' %}">View Teams</a>
-        </li>
-        <!-- Add more links here to explore other sections -->
-    </ul>
-    <h2>Previous Match Day ({{ previous_match_day.date }})</h2>
+    <h1>{% trans "Welcome to the Table Soccer League!" %}</h1>
+    <h2>{% trans "Previous Match Day" %} ({{ previous_match_day.date }})</h2>
     {% if previous_match_day %}
         <ul>
             {% for match in previous_match_day.matches.all %}
@@ -16,24 +10,24 @@
                     <a class="text-blue-500 hover:underline"
                        href="{% url 'match_detail' match.pk %}">{{ match.home_team }} vs {{ match.away_team }}</a>
                     <br>
-                    <p> Score: {{ match.home_score }} - {{ match.away_score }}</p>
+                    <p> {% trans "Score" %}: {{ match.home_score }} - {{ match.away_score }}</p>
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>No previous match day found.</p>
+        <p>{% trans "No previous match day found." %}</p>
     {% endif %}
-    <h2>Next Match Day ({{ next_match_day.date }})</h2>
+    <h2>{% trans "Next Match Day" %} ({{ next_match_day.date }})</h2>
     {% if next_match_day %}
         <ul>
             {% for match in next_match_day.matches.all %}
                 <li>
                     <p>{{ match.home_team }} vs {{ match.away_team }}</p>
-                    <p>Status: {{ match.status }}</p>
+                    <p>{% trans "Status" %}: {{ match.status }}</p>
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>No upcoming match day found.</p>
+        <p>{% trans "No upcoming match day found." %}</p>
     {% endif %}
 {% endblock %}

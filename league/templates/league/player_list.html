@@ -1,7 +1,8 @@
 {% extends 'league/base.html' %}
+{% load i18n %}
 {% load render_table from django_tables2 %}
 {% block content %}
-    <h1>Players</h1>
+    <h1>{% trans "Players" %}</h1>
     <form method="get" class="mt-2">
         {% load crispy_forms_tags %}
         {% crispy filter.form filter.form.helper %}

@@ -50,12 +50,14 @@ INSTALLED_APPS = [
     "crispy_tailwind",
     "django_tables2",
     "debug_toolbar",
+    "fontawesomefree",
 ]
 
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -131,9 +133,19 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 
 USE_I18N = True
+USE_L10N = True
 
 USE_TZ = True
 
+LANGUAGES = [
+    ("en", "English"),
+    ("fr", "Français"),
+    ("de", "Deutsch"),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / "locale/",
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
