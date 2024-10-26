@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-26 15:42+0000\n"
+"POT-Creation-Date: 2024-10-26 17:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,42 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: league/tables.py:11
+msgid "First Name"
+msgstr "Vorname"
+
+#: league/tables.py:14
+msgid "Last Name"
+msgstr "Nachname"
+
+#: league/tables.py:27
+msgid "Team Name"
+msgstr "Teamname"
+
+#: league/tables.py:29 league/templates/league/match_detail.html:11
+msgid "Venue"
+msgstr "Austragungsort"
+
+#: league/tables.py:38
+msgid "Segment Type"
+msgstr "Segmenttyp"
+
+#: league/tables.py:39
+msgid "Home Players"
+msgstr "Heimspieler"
+
+#: league/tables.py:40
+msgid "Home Score"
+msgstr "Heimscore"
+
+#: league/tables.py:41
+msgid "Away Score"
+msgstr "Auswärtsscore"
+
+#: league/tables.py:42
+msgid "Away Players"
+msgstr "Auswärtsspieler"
 
 #: league/templates/django_tables2/material_tailwind.html:79
 msgid "previous"
@@ -82,9 +118,26 @@ msgid "Next Match Day"
 msgstr "Nächster Spieltag"
 
 #: league/templates/league/home.html:26
+#: league/templates/league/match_detail.html:14
 msgid "Status"
 msgstr "Status"
 
 #: league/templates/league/home.html:31
 msgid "No upcoming match day found."
 msgstr "Kein kommender Spieltag gefunden."
+
+#: league/templates/league/match_detail.html:8
+msgid "Date"
+msgstr "Datum"
+
+#: league/templates/league/match_detail.html:17
+msgid "Overall Score"
+msgstr "Gesamtergebnis"
+
+#: league/templates/league/match_detail.html:22
+msgid "Submit Lineup"
+msgstr "Aufstellung einreichen"
+
+#: league/templates/league/match_detail.html:23
+msgid "Submit Score"
+msgstr "Ergebnis einreichen"

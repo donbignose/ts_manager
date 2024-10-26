@@ -1,23 +1,24 @@
 {% extends 'league/base.html' %}
+{% load i18n %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
     <h1>{{ match.home_team.name }} vs {{ match.away_team.name }}</h1>
     <p>
-        <strong>Date:</strong> {{ match.date }}
+        <strong>{% trans "Date" %}:</strong> {{ match.date }}
     </p>
     <p>
-        <strong>Venue:</strong> {{ match.home_team.venue }}
+        <strong>{% trans "Venue" %}:</strong> {{ match.home_team.venue }}
     </p>
     <p>
-        <strong>Status:</strong> {{ match.status }}
+        <strong>{% trans "Status" %}:</strong> {{ match.status }}
     </p>
     <p>
-        <strong>Overall Score:</strong> {{ match.home_score }} - {{ match.away_score }}
+        <strong>{% trans "Overall Score" %}:</strong> {{ match.home_score }} - {{ match.away_score }}
     </p>
 
     {% render_table table %}
 
-    <a class="dark:text-white" href="{% url 'submit_lineup' match.id %}">Submit Lineup</a>
-    <a class="dark:text-white" href="{% url 'submit_score' match.id %}">Submit Score</a>
+    <a class="dark:text-white" href="{% url 'submit_lineup' match.id %}">{% trans "Submit Lineup" %}</a>
+    <a class="dark:text-white" href="{% url 'submit_score' match.id %}">{% trans "Submit Score" %}</a>
 {% endblock %}
