@@ -172,10 +172,15 @@ class SegmentScoreForm(forms.ModelForm):
         away_score = cleaned_data.get("away_score")
         segment_number = self.instance.segment_number
 
-        max_score = segment_number * SegmentScore.MAX_SCORE
-        if home_score > max_score or away_score > max_score:
+        if (home_score is None) != (away_score is None):  # XOR check for None
             raise forms.ValidationError(
-                f"Score cannot exceed {max_score} for segment {segment_number}."
+                "Both home score and away score must be provided, or both left empty."
             )
+        if home_score is not None and away_score is not None:
+            max_score = segment_number * SegmentScore.MAX_SCORE
+            if home_score > max_score or away_score > max_score:
+                raise forms.ValidationError(
+                    f"Score cannot exceed {max_score} for segment {segment_number}."
+                )
 
         return cleaned_data

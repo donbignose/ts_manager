@@ -18,7 +18,8 @@
     </p>
 
     {% render_table table %}
-
+  {% if user.is_authenticated %}
     <a class="dark:text-white" href="{% url 'submit_lineup' match.id %}">{% trans "Submit Lineup" %}</a>
     <a class="dark:text-white" href="{% url 'submit_score' match.id %}">{% trans "Submit Score" %}</a>
+  {% endif %}
 {% endblock %}
