@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch, Sum
 from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
@@ -7,7 +8,7 @@ from django.http.response import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView, View
 from django.views.generic.edit import FormView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
@@ -15,8 +16,17 @@ from django_tables2 import SingleTableMixin
 from league.filter import PlayerFilter
 
 from .forms import SegmentScoreForm, SegmentLineupForm
-from .models import Match, MatchDay, Player, Season, SeasonTeam, SegmentScore, Team
-from .tables import PlayerTable, TeamTable, SegmentTable
+from .models import (
+    LeagueTable,
+    Match,
+    MatchDay,
+    Player,
+    Season,
+    SeasonTeam,
+    SegmentScore,
+    Team,
+)
+from .tables import LeagueTableTable, PlayerTable, TeamTable, SegmentTable
 
 
 def home(request):
@@ -99,18 +109,38 @@ class MatchDetailView(SingleTableMixin, DetailView):
         return match.segments.all()
 
 
-def active_league(request):
-    season = (
-        Season.objects.filter(active=True, league__type="regular")
-        .prefetch_related(
-            "match_days",
-            "match_days__matches",
-            "match_days__matches__home_team",
-            "match_days__matches__away_team",
+class ActiveLeagueView(SingleTableMixin, TemplateView):
+    template_name = "league/active_league.html"
+    table_class = LeagueTableTable
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["season"] = (
+            Season.objects.filter(active=True, league__type="regular")
+            .prefetch_related(
+                "match_days",
+                Prefetch(
+                    "match_days__matches",
+                    queryset=Match.objects.annotate(
+                        total_home_score=Sum("segments__home_score"),
+                        total_away_score=Sum("segments__away_score"),
+                    ).prefetch_related("home_team", "away_team"),
+                ),
+            )
+            .first()
         )
-        .first()
-    )
-    return render(request, "league/active_league.html", {"season": season})
+        return context
+
+    def get_table_data(self):
+        active_league_table = (
+            LeagueTable.objects.filter(
+                match_day__season__active=True,
+                match_day__season__league__type="regular",
+            )
+            .select_related("team", "match_day")
+            .all()
+        )
+        return active_league_table
 
 
 def active_cup(request):

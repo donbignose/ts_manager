@@ -6,6 +6,7 @@ from django.utils.html import format_html
 from .forms import MatchGenerationForm, SegmentForm
 from .models import (
     League,
+    LeagueTable,
     Match,
     MatchDay,
     Player,
@@ -33,6 +34,24 @@ class PlayerInline(admin.TabularInline):
 class MatchInline(admin.TabularInline):
     model = Match
     extra = 1
+    show_change_link = True
+
+
+class LeagueTableInline(admin.TabularInline):
+    model = LeagueTable
+    extra = 0
+    readonly_fields = ["team", "played", "points", "goal_difference"]
+    fields = [
+        "team",
+        "played",
+        "wins",
+        "draws",
+        "losses",
+        "points",
+        "goals_for",
+        "goals_against",
+        "goal_difference",
+    ]
 
 
 class SegmentScoreInline(admin.TabularInline):
@@ -131,7 +150,7 @@ class SeasonTeamAdmin(admin.ModelAdmin):
 @admin.register(MatchDay)
 class MatchDayAdmin(admin.ModelAdmin):
     list_display = ("__str__",)
-    inlines = [MatchInline]
+    inlines = [MatchInline, LeagueTableInline]
 
 
 @admin.register(Match)

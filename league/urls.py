@@ -35,7 +35,7 @@ urlpatterns = [
     path(
         "seasons/<int:season_id>/league-table/", views.league_table, name="league_table"
     ),
-    path("active-league/", views.active_league, name="active_league"),
+    path("active-league/", views.ActiveLeagueView.as_view(), name="active_league"),
     path("active-cup/", views.active_cup, name="active_cup"),
     # Player URLs
     path("players/", views.PlayerListView.as_view(), name="player_list"),

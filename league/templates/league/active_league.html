@@ -1,8 +1,10 @@
 {% extends 'league/base.html' %}
 {% load i18n %}
+{% load render_table from django_tables2 %}
 {% block content %}
     <h1>{% trans "League" %}</h1>
     <h3>{{ season }}</h3>
+    {% render_table table %}
     {% for match_day in season.match_days.all %}
         <div class="border-b border-slate-200">
             <button onclick="toggleAccordion({{ forloop.counter }})"
