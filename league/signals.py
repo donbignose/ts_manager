@@ -38,3 +38,21 @@ def update_standings_on_match_update(sender, instance, **kwargs):
 
     if match_day.completed:
         update_standings_for_new_match_day(match_day)
+
+
+@receiver(post_save, sender=SegmentScore)
+def finish_match_on_finished_score(sender, instance, **kwargs):
+    """
+    Signal handler to finish the match when all segments have been scored.
+    """
+    match = instance.match
+    if match.status in (Match.Status.FINISHED, Match.Status.NOT_STARTED):
+        return
+    finished_match_score_condition = (
+        match.home_score == 49
+        or match.away_score == 49
+        or (match.home_score == 48 and match.away_score == 48)
+    )
+    if match.segments.count() == 7 and finished_match_score_condition:
+        match.status = Match.Status.FINISHED
+        match.save()

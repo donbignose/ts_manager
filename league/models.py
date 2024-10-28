@@ -1,7 +1,5 @@
-import random
 from django.core.exceptions import ValidationError
 from datetime import timedelta
-from itertools import combinations
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.expressions import F
@@ -253,7 +251,9 @@ class Match(models.Model):
 
     @property
     def home_score(self):
-        if self.status == Match.Status.NOT_STARTED:
+        if hasattr(self, "total_home_score"):
+            return self.total_home_score or 0
+        elif self.status == Match.Status.NOT_STARTED:
             return None
 
         return (
@@ -265,7 +265,9 @@ class Match(models.Model):
 
     @property
     def away_score(self):
-        if self.status == Match.Status.NOT_STARTED:
+        if hasattr(self, "total_away_score"):
+            return self.total_away_score or 0
+        elif self.status == Match.Status.NOT_STARTED:
             return None
 
         return (
@@ -309,7 +311,6 @@ class SegmentScore(models.Model):
     away_score = models.IntegerField(null=True, blank=True)
     segment_type = models.CharField(max_length=2, choices=SegmentType.choices)
 
-    # Many-to-many relationship for players in each segment
     home_players = models.ManyToManyField(
         "Player", related_name="home_segments", blank=True
     )
@@ -322,6 +323,35 @@ class SegmentScore(models.Model):
 
     def __str__(self):
         return f"{self.match} - Segment {self.segment_type}"
+
+    @property
+    def total_home_score(self):
+        previous_total_home_score = (
+            self.match.segments.filter(
+                segment_number__lt=self.segment_number
+            ).aggregate(total_home_score=models.Sum("home_score"))["total_home_score"]
+            or 0
+        )
+        return previous_total_home_score + (self.home_score or 0)
+
+    @property
+    def total_away_score(self):
+        previous_total_away_score = (
+            self.match.segments.filter(
+                segment_number__lt=self.segment_number
+            ).aggregate(total_away_score=models.Sum("away_score"))["total_away_score"]
+            or 0
+        )
+        return previous_total_away_score + (self.away_score or 0)
+
+    def clean(self) -> None:
+        max_score = self.segment_number * self.MAX_SCORE
+        if self.total_home_score > max_score or self.total_away_score > max_score:
+            raise ValidationError(
+                f"Score cannot exceed {max_score} for segment {self.segment_type}."
+            )
+
+        return super().clean()
 
 
 class LeagueTableManager(models.Manager):
