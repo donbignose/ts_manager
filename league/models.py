@@ -309,17 +309,3 @@ class SegmentScore(models.Model):
 
     def __str__(self):
         return f"{self.match} - Segment {self.segment_type}"
-
-
-class LeagueTable(models.Model):
-    season = models.ForeignKey(
-        Season, on_delete=models.CASCADE, related_name="league_table"
-    )
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    wins = models.IntegerField(default=0)
-    losses = models.IntegerField(default=0)
-    draws = models.IntegerField(default=0)
-    points = models.IntegerField(default=0)
-
-    def __str__(self):
-        return f"{self.team} - {self.points} points in {self.season}"
