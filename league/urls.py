@@ -19,6 +19,7 @@ urlpatterns = [
         name="match_day_detail",
     ),
     path("matches/<int:pk>/", views.MatchDetailView.as_view(), name="match_detail"),
+    path("matches/<int:match_id>/start/", views.start_match, name="start_match"),
     # Submit score URL
     path(
         "matches/<int:match_id>/submit-score/",

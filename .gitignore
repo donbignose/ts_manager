@@ -32,7 +32,8 @@ __pycache__/
 db.sqlite3
 media/
 staticfiles/
-static/
+static/*
+!static/js/
 
 # If you are using MySQL, PostgreSQL, or another DB, ignore config files:
 *.sql
@@ -47,9 +48,6 @@ static/
 *.swp
 *.swo
 
-# Django generated files (for use in production)
-static/
-media/
 
 # Testing
 .coverage

@@ -1,6 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -266,3 +268,13 @@ class PlayerListView(SingleTableMixin, FilterView):
 def player_detail(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
     return render(request, "league/player_detail.html", {"player": player})
+
+
+@require_POST
+def start_match(request, match_id):
+    match = get_object_or_404(Match, pk=match_id)
+    if match.status == Match.Status.NOT_STARTED:
+        match.status = Match.Status.IN_PROGRESS
+        match.save()
+        return HttpResponse(Match.Status.IN_PROGRESS)
+    return HttpResponse(status=400)
