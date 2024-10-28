@@ -4,6 +4,7 @@ from datetime import timedelta
 from itertools import combinations
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.expressions import F
 from django.urls import reverse
 
 
@@ -220,6 +221,12 @@ class MatchDay(models.Model):
         unique_together = ("season", "round_number")
         ordering = ["season", "round_number"]
 
+    @property
+    def completed(self):
+        return all(
+            match.status == Match.Status.FINISHED for match in self.matches.all()
+        )
+
 
 class Match(models.Model):
     class Status(models.TextChoices):
@@ -248,19 +255,25 @@ class Match(models.Model):
     def home_score(self):
         if self.status == Match.Status.NOT_STARTED:
             return None
-        segments = self.segments.all()
-        if len(segments) == 0:
-            return 0
-        return sum(segment.home_score for segment in segments)
+
+        return (
+            self.segments.aggregate(total_home_score=models.Sum("home_score"))[
+                "total_home_score"
+            ]
+            or 0
+        )
 
     @property
     def away_score(self):
         if self.status == Match.Status.NOT_STARTED:
             return None
-        segments = self.segments.all()
-        if len(segments) == 0:
-            return 0
-        return sum(segment.away_score for segment in segments)
+
+        return (
+            self.segments.aggregate(total_away_score=models.Sum("away_score"))[
+                "total_away_score"
+            ]
+            or 0
+        )
 
     def __str__(self):
         return f"{self.home_team} vs {self.away_team} on {self.date}"
@@ -309,3 +322,55 @@ class SegmentScore(models.Model):
 
     def __str__(self):
         return f"{self.match} - Segment {self.segment_type}"
+
+
+class LeagueTableManager(models.Manager):
+    def get_previous_standings(self, current_match_day):
+        """
+        Retrieve the standings from the previous match day for a given current match day.
+        """
+        previous_match_day = (
+            MatchDay.objects.filter(
+                season=current_match_day.season,
+                round_number__lt=current_match_day.round_number,
+            )
+            .order_by("-round_number")
+            .first()
+        )
+        if previous_match_day:
+            return self.filter(match_day=previous_match_day)
+        return self.none()
+
+
+class LeagueTable(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="standings")
+    match_day = models.ForeignKey(
+        MatchDay, on_delete=models.CASCADE, related_name="team_standings"
+    )
+    played = models.IntegerField(default=0)
+    wins = models.IntegerField(default=0)
+    draws = models.IntegerField(default=0)
+    losses = models.IntegerField(default=0)
+    points = models.GeneratedField(
+        expression=F("wins") * 3 + F("draws"),
+        output_field=models.IntegerField(),
+        db_persist=True,
+    )
+    goals_for = models.IntegerField(default=0)
+    goals_against = models.IntegerField(default=0)
+    goal_difference = models.GeneratedField(
+        expression=F("goals_for") - F("goals_against"),
+        output_field=models.IntegerField(),
+        db_persist=True,
+    )
+
+    position = models.IntegerField(null=True, blank=True)
+
+    objects = LeagueTableManager()
+
+    class Meta:
+        unique_together = ("team", "match_day")
+        ordering = ["-points", "-goal_difference", "-goals_for"]
+
+    def __str__(self):
+        return f"{self.team} - {self.points} points in {self.match_day}"

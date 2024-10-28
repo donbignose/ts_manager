@@ -1,4 +1,5 @@
 from django.db.models.signals import post_save
+from .helper import update_standings_for_new_match_day
 from django.dispatch import receiver
 from .models import Match, SegmentScore
 
@@ -26,3 +27,14 @@ def create_segments_for_match(sender, instance, created, **kwargs):
                 segment_number=index,  # Segment number 1 through 7
                 segment_type=segment_type,
             )
+
+
+@receiver(post_save, sender=Match)
+def update_standings_on_match_update(sender, instance, **kwargs):
+    """
+    Signal handler to update standings only when all matches for a match day are finished.
+    """
+    match_day = instance.match_day
+
+    if match_day.completed:
+        update_standings_for_new_match_day(match_day)
