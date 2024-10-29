@@ -1,7 +1,6 @@
 {% extends "django_tables2/material_tailwind.html" %}
 {% load django_tables2 %}
 {% load i18n l10n %}
-
 {% block table.thead %}
     {% if table.show_header %}
         <thead {{ table.attrs.thead.as_html }}>
@@ -13,15 +12,12 @@
                         hx-target="div.table-container"
                         hx-swap="outerHTML"
                         hx-indicator=".progress"
-                        style="cursor: pointer">
-                          {{ column.header }}
-                    </th>
+                        style="cursor: pointer">{{ column.header }}</th>
                 {% endfor %}
             </tr>
         </thead>
     {% endif %}
 {% endblock table.thead %}
-
 {% block pagination.previous %}
     <li class="previous page-item">
         <div hx-get="{% querystring table.prefixed_page_field=table.page.previous_page_number %}"
@@ -32,25 +28,21 @@
              class="page-link">
             <span aria-hidden="true">&laquo;</span>
             {% trans 'previous' %}
-        </div>    
+        </div>
     </li>
 {% endblock pagination.previous %}
-
 {% block pagination.range %}
     {% for p in table.page|table_page_range:table.paginator %}
         <li class="page-item {% if p == table.page.number %}active{% endif %}">
-            <div class="page-link" 
+            <div class="page-link"
                  {% if p != '...' %}hx-get="{% querystring table.prefixed_page_field=p %}"{% endif %}
                  hx-trigger="click"
                  hx-target="div.table-container"
                  hx-swap="outerHTML"
-                 hx-indicator=".progress">
-                {{ p }}
-            </div>
+                 hx-indicator=".progress">{{ p }}</div>
         </li>
     {% endfor %}
 {% endblock pagination.range %}
-
 {% block pagination.next %}
     <li class="next page-item">
         <div hx-get="{% querystring table.prefixed_page_field=table.page.next_page_number %}"

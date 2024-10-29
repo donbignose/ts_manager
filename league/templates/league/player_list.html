@@ -4,13 +4,11 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <h1>{% trans "Players" %}</h1>
-    <form 
-      class="form-inline mt-2"
-      hx-get="{% url 'player_list' %}" 
-      hx-trigger="keyup changed delay:250ms from:#player-input"
-      hx-target="div.table-container" 
-      hx-swap="outerHTML" 
-    >
+    <form class="form-inline mt-2"
+          hx-get="{% url 'player_list' %}"
+          hx-trigger="keyup changed delay:250ms from:#player-input"
+          hx-target="div.table-container"
+          hx-swap="outerHTML">
         {% crispy filter.form filter.form.helper %}
     </form>
     {% render_table table %}
