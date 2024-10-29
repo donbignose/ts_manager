@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "django_tables2",
     "debug_toolbar",
     "fontawesomefree",
+    "django_htmx",
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 ROOT_URLCONF = "ts_manager.urls"

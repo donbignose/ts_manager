@@ -56,8 +56,15 @@ def home(request):
 class TeamListView(SingleTableMixin, ListView):
     queryset = Team.objects.all().select_related("venue")
     table_class = TeamTable
-    template_name = "league/team_list.html"
     paginate_by = 10
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "league/partials/table.html"
+        else:
+            template_name = "league/team_list.html"
+
+        return template_name
 
 
 def team_detail(request, team_id):
@@ -110,8 +117,15 @@ class MatchDetailView(SingleTableMixin, DetailView):
 
 
 class ActiveLeagueView(SingleTableMixin, TemplateView):
-    template_name = "league/active_league.html"
     table_class = LeagueTableTable
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "league/partials/table.html"
+        else:
+            template_name = "league/active_league.html"
+
+        return template_name
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -289,10 +303,17 @@ def league_table(request, season_id):
 
 class PlayerListView(SingleTableMixin, FilterView):
     table_class = PlayerTable
-    template_name = "league/player_list.html"
     filterset_class = PlayerFilter
     queryset = Player.objects.all()
     paginate_by = 10
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "league/partials/table.html"
+        else:
+            template_name = "league/player_list.html"
+
+        return template_name
 
 
 def player_detail(request, player_id):

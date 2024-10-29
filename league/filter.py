@@ -13,6 +13,7 @@ class PlayerFilter(df.FilterSet):
             attrs={
                 "placeholder": "Search players",
                 "class": "dark:bg-gray-700 dark:text-white dark:border-black",
+                "id": "player-input",
             }
         ),
     )

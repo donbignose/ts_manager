@@ -16,7 +16,7 @@ class PlayerTable(tables.Table):
 
     class Meta:
         model = Player
-        template_name = "django_tables2/material_tailwind.html"
+        template_name = "django_tables2/material_tailwind_htmx.html"
         fields = ("first_name", "last_name")
 
 
@@ -30,7 +30,7 @@ class TeamTable(tables.Table):
 
     class Meta:
         model = Team
-        template_name = "django_tables2/material_tailwind.html"
+        template_name = "django_tables2/material_tailwind_htmx.html"
         fields = ("name", "venue")
 
 
@@ -79,7 +79,7 @@ class LeagueTableTable(tables.Table):
 
     class Meta:
         model = LeagueTable
-        template_name = "django_tables2/material_tailwind.html"
+        template_name = "django_tables2/material_tailwind_htmx.html"
         fields = (
             "position",
             "team",
