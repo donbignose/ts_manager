@@ -11,9 +11,7 @@
                         <h4>{{ form.instance.get_segment_type_display }} {{ form.id }}</h4>
                         {% if form.non_field_errors %}
                             <ul class="errorlist">
-                                {% for error in form.non_field_errors %}
-                                    <li class="text-red-500">{{ error }}</li>
-                                {% endfor %}
+                                {% for error in form.non_field_errors %}<li class="text-red-500">{{ error }}</li>{% endfor %}
                             </ul>
                         {% endif %}
                         <div class="segment-score">

@@ -10,7 +10,7 @@
                     <a class="text-blue-500 hover:underline"
                        href="{% url 'match_detail' match.pk %}">{{ match.home_team }} vs {{ match.away_team }}</a>
                     <br>
-                    <p> {% trans "Score" %}: {{ match.home_score }} - {{ match.away_score }}</p>
+                    <p>{% trans "Score" %}: {{ match.home_score }} - {{ match.away_score }}</p>
                 </li>
             {% endfor %}
         </ul>

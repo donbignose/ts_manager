@@ -14,7 +14,11 @@
                 <h4>{{ season_team.season }}</h4>
                 <p>Team members:</p>
                 <ul>
-                    {% for player in season_team.players.all %}<li><p>{{ player }}</p></li>{% endfor %}
+                    {% for player in season_team.players.all %}
+                        <li>
+                            <p>{{ player }}</p>
+                        </li>
+                    {% endfor %}
                 </ul>
             </li>
         {% endfor %}
@@ -24,23 +28,24 @@
         {% for match in matches %}
             <ul>
                 <li>
-                    <span class="dark:text-white">{{ match.match_day }} ({{ match.date }}):</span> <a class="text-blue-500 hover:underline" href="{% url 'match_detail' match.id %}">
-                    {% if match.home_team == team %}
-                        <strong>{{ match.home_team }}</strong>
-                    {% else %}
-                        {{ match.home_team }}
-                    {% endif %}
-                    vs
-                    {% if match.away_team == team %}
-                        <strong>{{ match.away_team }}</strong>
-                    {% else %}
-                        {{ match.away_team }}
-                    {% endif %}
-                </a>
-            </li>
-        </ul>
-    {% endfor %}
-{% else %}
-    <p>No matches scheduled for this team.</p>
-{% endif %}
+                    <span class="dark:text-white">{{ match.match_day }} ({{ match.date }}):</span> <a class="text-blue-500 hover:underline"
+    href="{% url 'match_detail' match.id %}">
+                        {% if match.home_team == team %}
+                            <strong>{{ match.home_team }}</strong>
+                        {% else %}
+                            {{ match.home_team }}
+                        {% endif %}
+                        vs
+                        {% if match.away_team == team %}
+                            <strong>{{ match.away_team }}</strong>
+                        {% else %}
+                            {{ match.away_team }}
+                        {% endif %}
+                    </a>
+                </li>
+            </ul>
+        {% endfor %}
+    {% else %}
+        <p>No matches scheduled for this team.</p>
+    {% endif %}
 {% endblock %}
