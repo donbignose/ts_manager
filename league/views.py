@@ -1,21 +1,22 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch, Sum
 from django.forms import modelformset_factory
 from django.http import HttpResponse
-from django.views.decorators.http import require_POST
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, TemplateView, View
+from django.views.decorators.http import require_POST
+from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import FormView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
+from allauth.account.forms import LoginForm
 
 from league.filter import PlayerFilter
 
-from .forms import SegmentScoreForm, SegmentLineupForm
+from .forms import SegmentLineupForm, SegmentScoreForm
 from .models import (
     LeagueTable,
     Match,
@@ -26,7 +27,7 @@ from .models import (
     SegmentScore,
     Team,
 )
-from .tables import LeagueTableTable, PlayerTable, TeamTable, SegmentTable
+from .tables import LeagueTableTable, PlayerTable, SegmentTable, TeamTable
 
 
 def home(request):
@@ -329,3 +330,8 @@ def start_match(request, match_id):
         match.save()
         return HttpResponse(Match.Status.IN_PROGRESS)
     return HttpResponse(status=400)
+
+
+def login_modal_view(request):
+    form = LoginForm()
+    return render(request, "account/login_partial.html", {"form": form})

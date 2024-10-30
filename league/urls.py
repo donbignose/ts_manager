@@ -40,4 +40,6 @@ urlpatterns = [
     # Player URLs
     path("players/", views.PlayerListView.as_view(), name="player_list"),
     path("players/<int:player_id>/", views.player_detail, name="player_detail"),
+    # Login URLs
+    path("login-form/", views.login_modal_view, name="login_form"),
 ]
